@@ -31,21 +31,16 @@ sintheta = sin(theta);
         k = 1/(2*sintheta)*[r1;r2;r3];
    elseif (theta==0)
        k=[0;0;0];
-   elseif (R(1,1) ~= -1)
-       k1 = sqrt((R(1,1)+1)/2);
-       k2 = (R(1,2)/(2*k1));
-       k3 = (R(1,3)/(2*k1));
+   else
+       k_kT = (R+eye(3))/2;
+       k1 = sqrt(k_kT(1,1));
+       k2 = sqrt(k_kT(2,2));
+       k3 = sqrt(k_kT(3,3));
+       k2_sign = R(1,2)/abs(R(1,2));
+       k2 = k2_sign*k2;
+       k3_sign = R(1,3)/abs(R(1,3));
+       k3 = k3*k3_sign;
        k = [k1;k2;k3];
-   elseif (R(2,2) ~= -1)
-       k2 = sqrt((R(2,2)+1)/2);
-       k1 = (R(1,2)/(2*k2));
-       k3 = (R(2,3)/(2*k2));
-        k = [k1;k2;k3];
-   elseif  (R(3,3) ~= -1)
-       k3 = sqrt((R(3,3)+1)/2);
-       k1 = (R(1,3)/2*k3);
-       k2 = (R(2,3)/2*k3);
-        k = [k1;k2;k3];
    
     end
    

@@ -17,13 +17,13 @@
 
 function [R] = angleAxis2Rot(Omega)
   theta = norm(Omega);
- if theta < eps % Check if theta is very close to zero
+    if theta < eps % Check if theta is very close to zero
         R = eye(3); % Return identity matrix for no rotation
- else
+    else
     k = Omega/theta;
     k_x = [0 -k(3) k(2);
         k(3) 0 -k(1);
         -k(2) k(1) 0 ];
     R = cos(theta)*eye(3) + (1-cos(theta))*k*transpose(k)+sin(theta)*k_x;
- end 
-end
+    end 
+end 
