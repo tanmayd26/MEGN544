@@ -27,19 +27,32 @@ X = (trace(R)-1)/2;
 theta = atan2(Y,X);
 
 sintheta = sin(theta);
+   k_kT = (R+eye(3))/2;
+       k1 = sqrt(k_kT(1,1));
+       k2 = sqrt(k_kT(2,2));
+       k3 = sqrt(k_kT(3,3));
    if (theta~=pi && theta~=-pi && theta~=0)
         k = 1/(2*sintheta)*[r1;r2;r3];
    elseif (theta==0)
        k=[0;0;0];
+   elseif (theta == pi)
+      k = [k1;-k2;k3];
    else
-       k_kT = (R+eye(3))/2;
-       k1 = sqrt(k_kT(1,1));
-       k2 = sqrt(k_kT(2,2));
-       k3 = sqrt(k_kT(3,3));
-       k2_sign = R(1,2)/abs(R(1,2));
-       k2 = k2_sign*k2;
-       k3_sign = R(1,3)/abs(R(1,3));
-       k3 = k3*k3_sign;
+    
+    if abs(R(1, 2)) > eps
+        k2_sign = R(1, 2) / abs(R(1, 2));
+        k2 = k2_sign * k2;
+    end
+
+    if abs(R(1, 3)) > eps
+        k3_sign = R(1, 3) / abs(R(1, 3));
+        k3 = k3 * k3_sign;
+    end
+
+    if abs(R(2, 1)) > eps
+        k1_sign = R(2, 1) / abs(R(2, 1));
+        k1 = k1_sign * k1;
+    end
        k = [k1;k2;k3];
    
     end
