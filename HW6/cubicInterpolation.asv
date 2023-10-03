@@ -13,8 +13,7 @@ function coefficients = cubicInterpolation(initial_pose, final_pose, T,inverseKi
     % Compute the end-effector poses at each time step using forward kinematics
    T = zeros(4, 4);
     for i = 1:length(t)
-        t_factor = t(i);
-        inter_pose = (1 - t_factor)* initial_pose + t_factor*final_pose;
+        inter_pose = (1 - )
         [theta1, theta2, d3, theta4, theta5, theta6] = inverseKinematics(inter_pose);
         T(i) = trans*forwardKinematics(theta1,theta2,d3,theta4,theta5,theta6);
     end

@@ -1,11 +1,12 @@
-function [eepos] = forwardkinematics(pose)
-pose(1) = theta1;
-pose(2) = theta2;
-pose(3) = d3;
-pose(4) = theta4;
-pose(5) = theta5;
-pose(6) = theta6;
-c_124 = cos(theta1+theta2+theta4);
-s_124 = sin(theta1+theta2+theta4);
-eepos = [c_124*cos(theta5)*cos(theta6) -s_124*cos(theta6)-c_124*cos(theta5)*sin(theta6) -c_124*sin(theta5) cos(theta1+theta2)*a+cos(theta1)+b;
-    s_124*cos(theta5)*cos(theta6)+c_124*sin(theta6) c_124*cos(theta6)-s_124*cos(theta5)*sin(theta6) -s_124*sin(theta5) ];
+function [eepos] = forwardkinematics(theta1, theta2, d3, theta4, theta5, theta6)
+
+a = 1;
+b = 0.5;
+
+c_124 = cos(theta1+pose(2)+pose(4));
+s_124 = sin(theta1+pose(2)+pose(4));
+
+eepos = [c_124*cos(pose(5))*cos(pose(6))-s_124*sin(pose(6)) -s_124*cos(pose(6))-c_124*cos(pose(5))*sin(pose(6)) -c_124*sin(pose(5)) cos(theta1+pose(2))*b+cos(theta1)*a;
+    s_124*cos(pose(5))*cos(pose(6))+c_124*sin(pose(6)) c_124*cos(pose(6))-s_124*cos(pose(5))*sin(pose(6)) -s_124*sin(pose(5)) sin(theta1)*sin(pose(2))*b+sin(pose(1))*a;
+    cos(pose(6))*sin(pose(5)) -sin(pose(5))*sin(pose(6)) cos(pose(5)) pose(3);
+    0 0 0 1];
