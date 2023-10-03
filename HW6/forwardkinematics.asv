@@ -1,0 +1,11 @@
+function [eepos] = forwardkinematics(pose)
+pose(1) = theta1;
+pose(2) = theta2;
+pose(3) = d3;
+pose(4) = theta4;
+pose(5) = theta5;
+pose(6) = theta6;
+c_124 = cos(theta1+theta2+theta4);
+s_124 = sin(theta1+theta2+theta4);
+eepos = [c_124*cos(theta5)*cos(theta6) -s_124*cos(theta6)-c_124*cos(theta5)*sin(theta6) -c_124*sin(theta5) cos(theta1+theta2)*a+cos(theta1)+b;
+    s_124*cos(theta5)*cos(theta6)+c_124*sin(theta6) c_124*cos(theta6)-s_124*cos(theta5)*sin(theta6) -s_124*sin(theta5) ];
