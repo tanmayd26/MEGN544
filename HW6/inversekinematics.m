@@ -17,11 +17,24 @@ theta4_4 = atan2(-pose(2,3)/sin(theta5_2),-pose(1,3)/sin(theta5_2))-theta1_2-the
 theta6_1 = atan2(-pose(3,2)/sin(theta5_1),pose(3,1)/sin(theta5_1));
 theta6_2 = atan2(-pose(3,2)/sin(theta5_2),pose(3,1)/sin(theta5_2));
 
+% Initialize arrays to store valid angles
+valid_theta4 = [];
+valid_theta6 = [];
+
 if theta5_1 || theta5_2 < 1e-15
     
+    if is_valid(theta4_1, theta6_1)
+        valid_theta4 = [valid_theta4, theta4_1];
+        valid_theta6 = [valid_theta6, theta6_1];
+    end
+    if is_valid(theta4_2, theta6_2)
+        valid_theta4 = [valid_theta4, theta4_2];
+        valid_theta6 = [valid_theta6, theta6_2];
+    end
     alpha1 = atan2(-pose(1,2),pose(2,2));
     alpha2 = -atan2(-pose(1,2),pose(2,2));
 
-    b = (2*)
+    b = (2*valid_theta4+)
 
 end 
+
