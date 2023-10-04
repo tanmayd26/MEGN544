@@ -11,12 +11,11 @@ final_pose = [0 -1 0 0.5;
 T = 2.0; % Total time duration
 
 % Call the cubic interpolation function to get coefficients
+ theta_init =  inversekinematics(initial_pose,zeros(6,1));
 
-[theta1_init, theta2_init, d3_init, theta4_init, theta5_init, theta6_init] = inversekinematics(initial_pose);
-theta_init = [theta1_init, theta2_init, d3_init, theta4_init, theta5_init, theta6_init];
-[theta1_final, theta2_final, d3_final, theta4_final, theta5_final, theta6_final] = inversekinematics(final_pose);
-theta_final = [theta1_final, theta2_final, d3_final, theta4_final, theta5_final, theta6_final];
+theta_final = inversekinematics(final_pose,theta_init(:,1));
 
+t = 0:0.01:T;
 coeff = [];
 for i =1:6
     
@@ -24,6 +23,9 @@ for i =1:6
     coeff = [coeff [a0; a1; a2; a3]];
 end
 
-for i = 1:6
-    
+for i=1:6
+
+    q = cubicinterpolation(coeff(1,i),coeff(2,i),coeff(3,i),coeff(4,i),0,t);
+
 end
+
