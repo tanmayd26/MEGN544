@@ -6,8 +6,8 @@ x = (a+b)^2;
 y = (a-b)^2;
 px_2 = pose(1,4)^2;
 py_2 = pose(2,4)^2;
-theta2_1 = 2*atan(sqrt((x -(px_2+py_2))/((px_2+py_2)-y)));
-theta2_2 = -2*atan(sqrt((x -(px_2+py_2))/((px_2+py_2)-y)));
+theta2_1 = real(2*atan(sqrt((x -(px_2+py_2))/((px_2+py_2)-y))));
+theta2_2 = -real(2*atan(sqrt((x -(px_2+py_2))/((px_2+py_2)-y))));
 theta1_1 = atan2(pose(2,4),pose(1,4))-atan2(b*sin(theta2_1), a+b*cos(theta2_1)); 
 theta1_2 = atan2(pose(2,4),pose(1,4))-atan2(b*sin(theta2_2), a+b*cos(theta2_2)); 
 d3 = pose(3,4);
@@ -52,26 +52,7 @@ if theta5_1 < 1e-15
     t_3 = [theta1_1; theta2_1;d3;x_1_1(1,1);theta5_2;x_1_1(2,1)];
     t_4 = [theta1_1; theta2_2;d3;x_1_1(1,1);theta5_2;x_1_1(2,1)];
     
-    % diff_1 = norm(t_1-p_curr);
-    % diff_2 = norm(t_2-p_curr);
-    % diff_3 = norm(t_3-p_curr);
-    % diff_4 = norm(t_4-p_curr);
-
-    % diff = [diff_1, diff_2, diff_3, diff_4];
-    % [val,index] = min(diff);
-    % 
-    % if index == 1
-    % q_best = t_1;
-    % 
-    % elseif index == 2
-    % q_best = t_2;
-    % 
-    % elseif index == 3
-    % q_best = t_3;
-    % else
-    % q_best = t_4;
-    % end
-    
+   
     else
 
     t_1 = [theta1_1;theta2_1;d3;theta4_1; theta5_1; theta6_1];

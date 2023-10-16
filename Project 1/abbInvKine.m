@@ -16,12 +16,12 @@
 % th6 = theta6
 % reachable = true when the manipulator can reach a point
 % 
-% Abhilesh Borode
-% 10830440
-% MEGN 544 
-% 18th Nov 2018
+% Tanmay Desai
+% 10922557
+% MEGN 544A
+% October 22nd 2023
 
-function [th1,th2,th3,th4,th5,th6] = abbInvKine(T_des, th_last)
+function [th1,th2,th3,th4,th5,th6,reachable] = abbInvKine(T_des, th_last)
 a = [0;0.27;0.07;0;0;0];
 d = [0.29;0;0;0.302;0;0.072];
 alpha = [pi/2;0;-pi/2;pi/2;-pi/2;0];
