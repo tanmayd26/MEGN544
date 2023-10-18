@@ -24,6 +24,7 @@ function [p, v, a] = constAccelInterp(t, trajectory, transPercent)
     elseif t >= trajectory(end, 1)
         t = trajectory(end, 1);
     end
+    disp(t)
     %s = size(trajectory,1);
     % Find the segment in the trajectory that contains t
     for i = 2:size(trajectory, 1)
@@ -35,14 +36,14 @@ function [p, v, a] = constAccelInterp(t, trajectory, transPercent)
 
     % Extract relevant time and position data for the segment
     t_start = trajectory(segmentIndex, 1);
-    disp(t_start);
-    t_end = trajectory(segmentIndex + 1, 1);
-    disp(t_end);
-    p_start = trajectory(segmentIndex, 2:end);
-    disp(p_start);
-    p_end = trajectory(segmentIndex + 1, 2:end);
-    disp(p_end);
+    t_mid = trajectory(segmentIndex+1,1);
+    t_end = trajectory(segmentIndex+2, 1);
 
+    p_start = trajectory(segmentIndex, 2:end);
+    p_mid = trajectory(segmentIndex+1,2:end);
+    p_end = trajectory(segmentIndex+2, 2:end);
+
+    
     % Calculate the time in the current segment
     % t_rel = (t - t_start) / (t_end - t_start);
     % disp(t_rel);
@@ -78,6 +79,18 @@ function [p, v, a] = constAccelInterp(t, trajectory, transPercent)
     % disp(p);
     % disp(v);
     % disp(a);
-    t_23 = transPercent * min()
+    t_23 = transPercent * min(t_end-t_mid,t_mid-t_start);
+
+    t_2 = t_mid-t_23;
+    t_3 = t_mid + t_23;
+
+    v_start_mid = (p_mid-p_start)/(t_mid-t_start);
+    v_mid_end = (p_end-p_mid)/(t_end-t_mid);
+
+    a_mid_end = (v_mid_end-v_start_mid)/(2*t_23);
+
+    p_2 = p_mid-v_start_mid*t_23;
+
+    if t>
 end
 
