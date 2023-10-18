@@ -1,16 +1,16 @@
 initial_pose=[1 0 0 1;0 0 -1 0.25;0 1 0 0.25;0 0 0 1];
 final_pose=[0 -1 0 0.5;1 0 0 -0.5;0 0 1 0;0 0 0 1];
-%% Joint Spapce Interpolation
+
 t0=0;
 T=2;
 t=linspace(t0,T,200);
 initial_joints=inversekinematics(initial_pose,zeros(6,1));
-%
+
 final_joints=inversekinematics(final_pose,initial_joints(:,1));
 
 [a0, a1, a2, a3] = cubiccoeficient(initial_joints,final_joints,T-t0);
 theta_vals = cubicinterpolation(a0, a1, a2, a3, t0,t);
-%% Draw Joint Space
+
 out = VideoWriter('part3a');
 out.open();
 pos_all = zeros(3,200);
@@ -29,13 +29,17 @@ figure(1)
  legend('\theta_1','\theta_2','\theta_3','\theta_4','\theta_5','\theta_6');
  xlabel('Time [s]')
  ylabel('Angle [rad/\pi]')
-%subplot(2,2,1)
+ grid on;
+ axis equal;
+
 figure(2)
- plot(tList,pos_all)
+ plot(t,pos_all)
  legend('X','Y','Z')
  xlabel('Time [s]')
  ylabel('Position [m]')
-%subplot(2,2,3)
+    grid on;
+ axis equal;
+
 figure(3)
  plot3(pos_all(1,:),pos_all(2,:),pos_all(3,:))
  xlabel('X [m]')
@@ -44,6 +48,4 @@ figure(3)
  grid on;
  axis equal;
 
-ax=axes('Units','Normal','Position',[.075 .125 .85 .85],'Visible','off');
-set(get(ax,'Title'),'Visible','on')
-title(titleText);
+

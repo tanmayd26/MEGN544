@@ -1,71 +1,59 @@
-%% Twist
-R0=T0d(1:3,1:3);
-Rf=Tfd(1:3,1:3);
-om0=rot2AngleAxis(R0);
-%
-omf=rot2AngleAxis(Rf);
-% Interpolatting Omega
-[a0_om_x,a1_om_x,a2_om_x,a3_om_x] =GenCoffs(0,tf,om0(1),omf(1));
-[a0_om_y,a1_om_y,a2_om_y,a3_om_y] =GenCoffs(0,tf,om0(2),omf(2));
-[a0_om_z,a1_om_z,a2_om_z,a3_om_z] =GenCoffs(0,tf,om0(3),omf(3));
-% Interpolating position
-d0=T0d(1:3,4);
-df=Tfd(1:3,4);
-% Initial v
-th0_Twist=atan2(0.5*norm([R0(3,2)-R0(2,3);R0(1,3)-R0(3,1);R0(2,1)-R0(1,2)]),0.5*(trace(R0)-1));
-K0_Twist= [0;0;0];
-K0_x=[0 -K0_Twist(3) K0_Twist(2);
-    K0_Twist(3) 0 -K0_Twist(1);
-    -K0_Twist(2) K0_Twist(1) 0];
-om0=K0_Twist*th0_Twist;
-if det((eye(3)-R0)*K0_x+om0*K0_Twist')==0
-    v0=T0d(1:3,4);
-else
-    v0=inv((eye(3)-R0)*K0_x+om0*K0_Twist')*d0;
-end
-% Final Twis
-thf_Twist=atan2(0.5*norm([Rf(3,2)-Rf(2,3);Rf(1,3)-Rf(3,1);Rf(2,1)-Rf(1,2)]),0.5*(trace(Rf)-1));
-Kf=(1/(2*sin(thf_Twist)))*[Rf(3,2)-Rf(2,3);Rf(1,3)-Rf(3,1);Rf(2,1)-Rf(1,2)];
-Kf_x=[0 -Kf(3) Kf(2);
-    Kf(3) 0 -Kf(1);
-    -Kf(2) Kf(1) 0];
-omf=Kf*thf_Twist;
-vf=inv((eye(3)-Rf)*Kf_x+omf*Kf')*df;
-% Interpolatting V
-[a0_v_x,a1_v_x,a2_v_x,a3_v_x] =GenCoffs(0,tf,v0(1),vf(1));
-[a0_v_y,a1_v_y,a2_v_y,a3_v_y] =GenCoffs(0,tf,v0(2),vf(2));
-[a0_v_z,a1_v_z,a2_v_z,a3_v_z] =GenCoffs(0,tf,v0(3),vf(3));
-%
-for it=1:length(t)
-    om_t_x=a0_om_x+a1_om_x*t(it)+a2_om_x*t(it).^2+a3_om_x*t(it).^3;
-    om_t_y=a0_om_y+a1_om_y*t(it)+a2_om_y*t(it).^2+a3_om_y*t(it).^3;
-    om_t_z=a0_om_z+a1_om_z*t(it)+a2_om_z*t(it).^2+a3_om_z*t(it).^3;
-    om_t=[om_t_x;om_t_y;om_t_z];
-    %
-    % Interpolate Omega
-    v_t_x=a0_v_x+a1_v_x*t(it)+a2_v_x*t(it).^2+a3_v_x*t(it).^3;
-    v_t_y=a0_v_y+a1_v_y*t(it)+a2_v_y*t(it).^2+a3_v_y*t(it).^3;
-    v_t_z=a0_v_z+a1_v_z*t(it)+a2_v_z*t(it).^2+a3_v_z*t(it).^3;
-    v_t=[v_t_x;v_t_y;v_t_z];
-    K=om_t/norm(om_t);
-    K_x=[0 -K(3) K(2);
-        K(3) 0 -K(1);
-        -K(2) K(1) 0];
-    %
-    R_t=angleAxis2Rot(om_t);
-    d_t=((eye(3)-R_t)*K_x+om_t*K')*v_t;
-    %d_t=[dx(it);dy(it);dz(it)];
-    T_t=[R_t,d_t;0 0 0 1];
-    joints=IKfnc(T_t);
-    Joint_Variable(it,:,4)=joints;
-end
-%% Plot
-figure
-for i=1:4
-    for it=1:length(t)
-        subplot(2,2,i)
-        drawArm(Joint_Variable(it,1),Joint_Variable(it,2),Joint_Variable(it,3),Joint_Variable(it,4),joints(5),Joint_Variable(it,6), 1, Tfd)
-        pause(0.5)
-        grid
+initial_pose=[1 0 0 1;0 0 -1 0.25;0 1 0 0.25;0 0 0 1];
+final_pose=[0 -1 0 0.5;1 0 0 -0.5;0 0 1 0;0 0 0 1];
+t0=0;
+T=2;
+t=linspace(t0,T,200);
+
+t_init = transform2Twist(initial_pose);
+t_final = transform2Twist(final_pose);
+
+%This step is for getting the initial parameters as this is input to
+%calculate 
+initial_pose_inv = inversekinematics(initial_pose,zeros(6,1));
+[a0, a1, a2, a3] = cubiccoeficient(t_init,t_final,T);
+pos_all = cubicinterpolation(a0,a1,a2,a3,t0,t);
+d_vals = zeros(3,length(t));
+theta_vals = zeros(6,length(t));
+out = VideoWriter('part3d');
+out.open();
+for i=1:length(t)
+    % This step gives us the transformation matrix
+    tr = twist2Transform(pos_all(:,i));
+    if i>1
+        joint = inversekinematics(tr,theta_vals(:,i-1));
+    else
+        joint = inversekinematics(tr,initial_pose_inv(:,1));
     end
+        theta_vals(:,i) = joint';
+        trans = forwardkinematics(theta_vals(1,1),theta_vals(2,1),theta_vals(3,1), theta_vals(4,1),theta_vals(5,1),theta_vals(6,1));
+        position = trans(1:3,4);
+       drawArm(theta_vals(1,i), theta_vals(2,i), theta_vals(3,i), theta_vals(4,i), theta_vals(5,i), theta_vals(6,i),1,final_pose);
+        pause(1/200);
 end
+out.close();
+
+figure(1)
+
+ plot(t,theta_vals/pi)
+ legend('\theta_1','\theta_2','\theta_3','\theta_4','\theta_5','\theta_6');
+ xlabel('Time [s]')
+ ylabel('Angle [rad/\pi]')
+ grid on;
+ axis equal;
+
+figure(2)
+ plot(t,position(1:3,:))
+ legend('X','Y','Z')
+ xlabel('Time [s]')
+ ylabel('Position [m]')
+    grid on;
+ axis equal;
+
+figure(3)
+ plot3(position(1,:),position(2,:),position(3,:))
+ xlabel('X [m]')
+ ylabel('Y [m]')
+ zlabel('Z [m]')
+ grid on;
+ axis equal;
+
