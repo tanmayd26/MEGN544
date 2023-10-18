@@ -1,33 +1,21 @@
-% abbInvKine(T_des, th_last) find the joint angles for the
-% desired point of the end effector.
-%
-%  [th1,th2,th3,th4,th5,th6 , reachable] = abbInvKine(T_des, th_last)
-%   find the values of joint(theta) angles for the given ABB, and also comments
-%   whether the manipulator can reach the point which is desired.
-%
-%
-% T_des = Desired Homogeneous Transform
-% th_last = previous values of joint angles
-% th1 = theta1
-% th2 = theta2
-% th3 = theta3
-% th4 = theta4
-% th5 = theta5
-% th6 = theta6
-% reachable = true when the manipulator can reach a point
-%
-% Tanmay Desai
-% 10922557
-% MEGN 544A
-% October 22nd 2023
+T_des = [0.429827827654558	0.893527447285214	-0.129833506929966	-0.00348228519229711;
+    -0.177170506823121	-0.0575340167941418	-0.982497047539365	-0.0938703185970968;
+    -0.885357922021259	0.445307239846268	0.133576989241024	0.441540655654374;
+    0	0	0	1];
 
-function [th1,th2,th3,th4,th5,th6,reachable] = abbInvKine(T_des, th_last)
+th_last = [-1.34462246926484;
+    -1.45975435983443;
+    1.31631027597796;
+    -1.62440540245517;
+    0.339500573552582;
+    -1.13820577400355];
+
 a = [0;0.27;0.07;0;0;0];
 d = [0.29;0;0;0.302;0;0.072];
 alpha = [pi/2;0;-pi/2;pi/2;-pi/2;0];
 if exist('th_last','var')==0
     % Theta 1
-    d_05 = T_des(1:3,4) - (d(6)*T_des(1:3,3)*[0;0;1]);
+    d_05 = T_des(1:3,4) - (T_des(1:3,3)*d(6));
     theta1(1) = real(atan2(d_05(2,1),d_05(1,1)));
     theta1(2) = pi+real(atan2(d_05(2,1),d_05(1,1)));
     % Theta 3
@@ -41,7 +29,7 @@ if exist('th_last','var')==0
     d_14_2 = (rot_10_2)*(d_05-d_01);
     phi = atan2(d(4),a(3));
     l = sqrt((d(4)^2)+(a(3)^2));
- 
+    disp(2*a(2)*l);
     si(1) = 2 * atan2(sqrt((2*a(2)*l)+(d_14(1,1)^2)+(d_14(2,1)^2)-(a(2)^2)-(l^2)),sqrt((2*a(2)*l)-(d_14(1,1)^2)-(d_14(2,1)^2)+(a(2)^2)+(l^2)));
     si(2) = 2 * atan2(sqrt((2*a(2)*l)+(d_14_2(1,1)^2)+(d_14_2(2,1)^2)-(a(2)^2)-(l^2)),sqrt((2*a(2)*l)-(d_14_2(1,1)^2)-(d_14_2(2,1)^2)+(a(2)^2)+(l^2)));
     theta3(1:2) = pi - si(1:2) - phi;
@@ -109,8 +97,8 @@ if exist('th_last','var')==0
 else
     % Theta 1
     d_05 = T_des(1:3,4) - (d(6)*T_des(1:3,1:3)*[0;0;1]);
-    theta1(1) = real(atan2(d_05(2,1),d_05(1,1)));
-    theta1(2) = pi+real(atan2(d_05(2,1),d_05(1,1)));
+    theta1(1) = atan2(d_05(2,1),d_05(1,1));
+    theta1(2) = pi+atan2(d_05(2,1),d_05(1,1));
     if theta1(1)<pi
         while theta1(1)<pi
             theta1(1) = theta1(1)+(2*pi);

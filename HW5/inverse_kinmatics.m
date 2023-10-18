@@ -9,8 +9,8 @@ d_56 =(d(6)*T_curr(1:3,1:3)*[0;0;1]);
 d_06 = T_curr(1:3,4);
 d_05 = d_06 - d_56;
 
-theta1(1) = pi+ atan2(d_05(2,1),d_05(1,1));
-theta1(2) = atan2(d_05(2,1),d_05(1,1));
+theta1(1) = pi+ real(atan2(d_05(2,1),d_05(1,1)));
+theta1(2) = real(atan2(d_05(2,1),d_05(1,1));
 theta1 = theta1(:);
 % Theta 3
 rot_01 = rotZ(theta1)*rotX(alpha(1));
