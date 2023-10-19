@@ -5,16 +5,16 @@
 %   find the values of joint(theta) angles for the given ABB, and also comments
 %   whether the manipulator can reach the point which is desired.
 %
-% output1 = theta1
-% output2 = theta2
-% output3 = theta3
-% output4 = theta4
-% output5 = theta5
-% output6 = theta6
-% output7 = reachable
 %
-% input1 =T_des Desired Transformation Matrix
-% input2 =th_last Last theta values
+% T_des = Desired Homogeneous Transform
+% th_last = previous values of joint angles
+% th1 = theta1
+% th2 = theta2
+% th3 = theta3
+% th4 = theta4
+% th5 = theta5
+% th6 = theta6
+% reachable = true when the manipulator can reach a point
 %
 % Tanmay Desai
 % 10922557
@@ -27,28 +27,27 @@ d = [0.29;0;0;0.302;0;0.072];
 alpha = [-pi/2;0;-pi/2;pi/2;pi/2;0];
 if exist('th_last','var')==0
     % Theta 1
-    d_56 = (d(6)*T_des(1:3,1:3)*[0;0;1]);
-    d_05 = T_des(1:3,4) - d_56;
+    d_05 = T_des(1:3,4) - (d(6)*T_des(1:3,1:3)*[0;0;1]);
     theta1(1) = atan2(d_05(2,1),d_05(1,1));
     theta1(2) = pi+atan2(d_05(2,1),d_05(1,1));
     % Theta 3
     rot_01 = rotZ(theta1(1))*rotX(alpha(1));
     rot_01_2 = rotZ(theta1(2))*rotX(alpha(1));
-    d_01 = [0;0;d(1)];
+    d_01 = d(1)*[0;0;1];
     rot_10 = rot_01';
     rot_10_2 = rot_01_2';
     d_14 = (rot_10)*(d_05-d_01);
     d_14_2 = (rot_10_2)*(d_05-d_01);
     phi = atan2(d(4),a(3));
-    d_24 = sqrt((d(4)^2)+(a(3)^2));
-    si(1) = 2 * atan2(sqrt((2*a(2)*d_24)+(d_14(1,1)^2)+(d_14(2,1)^2)-(a(2)^2)-(d_24^2)),sqrt((2*a(2)*d_24)-(d_14(1,1)^2)-(d_14(2,1)^2)+(a(2)^2)+(d_24^2)));
-    si(2) = 2 * atan2(sqrt((2*a(2)*d_24)+(d_14_2(1,1)^2)+(d_14_2(2,1)^2)-(a(2)^2)-(d_24^2)),sqrt((2*a(2)*d_24)-(d_14_2(1,1)^2)-(d_14_2(2,1)^2)+(a(2)^2)+(d_24^2)));
+    l = sqrt((d(4)^2)+(a(3)^2));
+    si(1) = 2 * atan2(sqrt((2*a(2)*l)+(d_14(1,1)^2)+(d_14(2,1)^2)-(a(2)^2)-(l^2)),sqrt((2*a(2)*l)-(d_14(1,1)^2)-(d_14(2,1)^2)+(a(2)^2)+(l^2)));
+    si(2) = 2 * atan2(sqrt((2*a(2)*l)+(d_14_2(1,1)^2)+(d_14_2(2,1)^2)-(a(2)^2)-(l^2)),sqrt((2*a(2)*l)-(d_14_2(1,1)^2)-(d_14_2(2,1)^2)+(a(2)^2)+(l^2)));
     theta3(1:2) = pi - si(1:2) - phi;
     % Theta 2
     alpha1(1) = atan2(d_14(2,1),d_14(1,1));
     alpha1(2) = atan2(d_14_2(2,1),d_14_2(1,1));
-    gamma(1) = atan2((d_24*sin(theta3(1)+phi)),(a(2)+(d_24*cos(theta3(1)+phi))));
-    gamma(2) = atan2((d_24*sin(theta3(2)+phi)),(a(2)+(d_24*cos(theta3(2)+phi))));
+    gamma(1) = atan2((l*sin(theta3(1)+phi)),(a(2)+(l*cos(theta3(1)+phi))));
+    gamma(2) = atan2((l*sin(theta3(2)+phi)),(a(2)+(l*cos(theta3(2)+phi))));
     theta2(1:2) = alpha1(1:2) - gamma(1:2) + pi/2;
     % Theta 5 Calculation
     rot_03 = rot_01*rotZ(theta2(1))*rotX(0)*rotZ(theta3(1))*rotX(-pi/2);
@@ -141,12 +140,12 @@ else
     rot_10 = rot_01';
     d_14 = (rot_10)*(d_05-d_01);
     phi = atan2(d(4),a(3));
-    d_24 = sqrt((d(4)^2)+(a(3)^2));
+    l = sqrt((d(4)^2)+(a(3)^2));
     count=0;
-    if isreal(sqrt((2*a(2)*d_24)-(d_14(1,1)^2)-(d_14(2,1)^2)+(a(2)^2)+(d_24^2)))==0
+    if isreal(sqrt((2*a(2)*l)-(d_14(1,1)^2)-(d_14(2,1)^2)+(a(2)^2)+(l^2)))==0
         count=1;
     end
-    si = 2 * atan2(sqrt((2*a(2)*d_24)+(d_14(1,1)^2)+(d_14(2,1)^2)-(a(2)^2)-(d_24^2)),real(sqrt((2*a(2)*d_24)-(d_14(1,1)^2)-(d_14(2,1)^2)+(a(2)^2)+(d_24^2))));
+    si = 2 * atan2(sqrt((2*a(2)*l)+(d_14(1,1)^2)+(d_14(2,1)^2)-(a(2)^2)-(l^2)),real(sqrt((2*a(2)*l)-(d_14(1,1)^2)-(d_14(2,1)^2)+(a(2)^2)+(l^2))));
     theta3(1) = pi - si - phi;
     theta3(2) = pi + si - phi;
     if theta3(1)<pi
@@ -175,7 +174,7 @@ else
 
 
     alpha1 = atan2(d_14(2,1),d_14(1,1));
-    gamma = atan2((d_24*sin(th3+phi)),(a(2)+(d_24*cos(th3+phi))));
+    gamma = atan2((l*sin(th3+phi)),(a(2)+(l*cos(th3+phi))));
     theta2 = alpha1 - gamma + pi/2;
     if theta2<pi
         while theta2<pi
