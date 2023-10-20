@@ -24,12 +24,12 @@
 function [th1,th2,th3,th4,th5,th6,reachable] = abbInvKine(T_des, th_last)
 a = [0;0.27;0.07;0;0;0];
 d = [0.29;0;0;0.302;0;0.072];
-alpha = [pi/2;0;-pi/2;pi/2;-pi/2;0];
+alpha = [-pi/2;0;-pi/2;pi/2;pi/2;0];
 if exist('th_last','var')==0
     % Theta 1
-    d_05 = T_des(1:3,4) - (d(6)*T_des(1:3,3)*[0;0;1]);
-    theta1(1) = real(atan2(d_05(2,1),d_05(1,1)));
-    theta1(2) = pi+real(atan2(d_05(2,1),d_05(1,1)));
+    d_05 = T_des(1:3,4) - (d(6)*T_des(1:3,1:3)*[0;0;1]);
+    theta1(1) = atan2(d_05(2,1),d_05(1,1));
+    theta1(2) = pi+atan2(d_05(2,1),d_05(1,1));
     % Theta 3
     rot_01 = rotZ(theta1(1))*rotX(alpha(1));
     rot_01_2 = rotZ(theta1(2))*rotX(alpha(1));
@@ -37,11 +37,9 @@ if exist('th_last','var')==0
     rot_10 = rot_01';
     rot_10_2 = rot_01_2';
     d_14 = (rot_10)*(d_05-d_01);
-
     d_14_2 = (rot_10_2)*(d_05-d_01);
     phi = atan2(d(4),a(3));
     l = sqrt((d(4)^2)+(a(3)^2));
- 
     si(1) = 2 * atan2(sqrt((2*a(2)*l)+(d_14(1,1)^2)+(d_14(2,1)^2)-(a(2)^2)-(l^2)),sqrt((2*a(2)*l)-(d_14(1,1)^2)-(d_14(2,1)^2)+(a(2)^2)+(l^2)));
     si(2) = 2 * atan2(sqrt((2*a(2)*l)+(d_14_2(1,1)^2)+(d_14_2(2,1)^2)-(a(2)^2)-(l^2)),sqrt((2*a(2)*l)-(d_14_2(1,1)^2)-(d_14_2(2,1)^2)+(a(2)^2)+(l^2)));
     theta3(1:2) = pi - si(1:2) - phi;
@@ -61,7 +59,7 @@ if exist('th_last','var')==0
     theta5(1) = atan2(sqrt((R1(3,2)^2)+(R1(3,1)^2)),R1(3,3));
     theta5(2) = atan2(sqrt((R2(3,2)^2)+(R2(3,1)^2)),R2(3,3));
     % Theta 4%6
-    if sin(theta5(1)) == 0 || sin(theta5(2)) == 0
+    if sin(theta5(1)) <1e-15 || sin(theta5(2)) <1e-15
 
 
         theta4(1:2)=0;
@@ -109,8 +107,8 @@ if exist('th_last','var')==0
 else
     % Theta 1
     d_05 = T_des(1:3,4) - (d(6)*T_des(1:3,1:3)*[0;0;1]);
-    theta1(1) = real(atan2(d_05(2,1),d_05(1,1)));
-    theta1(2) = pi+real(atan2(d_05(2,1),d_05(1,1)));
+    theta1(1) = atan2(d_05(2,1),d_05(1,1));
+    theta1(2) = pi+atan2(d_05(2,1),d_05(1,1));
     if theta1(1)<pi
         while theta1(1)<pi
             theta1(1) = theta1(1)+(2*pi);

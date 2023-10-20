@@ -9,13 +9,12 @@ th_last = [-1.34462246926484;
     -1.62440540245517;
     0.339500573552582;
     -1.13820577400355];
-
 a = [0;0.27;0.07;0;0;0];
 d = [0.29;0;0;0.302;0;0.072];
 alpha = [pi/2;0;-pi/2;pi/2;-pi/2;0];
-if exist('th_last','var')==0
+
     % Theta 1
-    d_05 = T_des(1:3,4) - (T_des(1:3,3)*d(6));
+    d_05 = T_des(1:3,4) - (d(6).*T_des(1:3,3).*[0;0;1]);
     theta1(1) = real(atan2(d_05(2,1),d_05(1,1)));
     theta1(2) = pi+real(atan2(d_05(2,1),d_05(1,1)));
     % Theta 3
@@ -29,7 +28,7 @@ if exist('th_last','var')==0
     d_14_2 = (rot_10_2)*(d_05-d_01);
     phi = atan2(d(4),a(3));
     l = sqrt((d(4)^2)+(a(3)^2));
-    disp(2*a(2)*l);
+ 
     si(1) = 2 * atan2(sqrt((2*a(2)*l)+(d_14(1,1)^2)+(d_14(2,1)^2)-(a(2)^2)-(l^2)),sqrt((2*a(2)*l)-(d_14(1,1)^2)-(d_14(2,1)^2)+(a(2)^2)+(l^2)));
     si(2) = 2 * atan2(sqrt((2*a(2)*l)+(d_14_2(1,1)^2)+(d_14_2(2,1)^2)-(a(2)^2)-(l^2)),sqrt((2*a(2)*l)-(d_14_2(1,1)^2)-(d_14_2(2,1)^2)+(a(2)^2)+(l^2)));
     theta3(1:2) = pi - si(1:2) - phi;
@@ -94,166 +93,3 @@ if exist('th_last','var')==0
     %
     %
     %
-else
-    % Theta 1
-    d_05 = T_des(1:3,4) - (d(6)*T_des(1:3,1:3)*[0;0;1]);
-    theta1(1) = atan2(d_05(2,1),d_05(1,1));
-    theta1(2) = pi+atan2(d_05(2,1),d_05(1,1));
-    if theta1(1)<pi
-        while theta1(1)<pi
-            theta1(1) = theta1(1)+(2*pi);
-        end
-    end
-    if theta1(2)<pi
-        while theta1(2)<pi
-            theta1(2) = theta1(2)+(2*pi);
-        end
-    end
-    if theta1(1)>pi
-        while theta1(1)>pi
-            theta1(1) = theta1(1)-(2*pi);
-        end
-    end
-    if theta1(2)>pi
-        while theta1(2)>pi
-            theta1(2) = theta1(2)-(2*pi);
-        end
-    end
-
-    %theta1(2) = pi+atan2(d_05(2,1),d_05(1,1));
-    %theta1(2) = pi+atan2(d_05(2,1),d_05(1,1));
-    [M1,I1] = min((th_last(1)-theta1).^2);
-    th1 = theta1(I1);
-    % Theta 3
-    rot_01 = rotZ(th1)*rotX(alpha(1));
-    d_01 = d(1)*[0;0;1];
-    rot_10 = rot_01';
-    d_14 = (rot_10)*(d_05-d_01);
-    phi = atan2(d(4),a(3));
-    l = sqrt((d(4)^2)+(a(3)^2));
-    count=0;
-    if isreal(sqrt((2*a(2)*l)-(d_14(1,1)^2)-(d_14(2,1)^2)+(a(2)^2)+(l^2)))==0
-        count=1;
-    end
-    si = 2 * atan2(sqrt((2*a(2)*l)+(d_14(1,1)^2)+(d_14(2,1)^2)-(a(2)^2)-(l^2)),real(sqrt((2*a(2)*l)-(d_14(1,1)^2)-(d_14(2,1)^2)+(a(2)^2)+(l^2))));
-    theta3(1) = pi - si - phi;
-    theta3(2) = pi + si - phi;
-    if theta3(1)<pi
-        while theta3(1)<pi
-            theta3(1) = theta3(1)+(2*pi);
-        end
-    end
-    if theta3(2)<pi
-        while theta3(2)<pi
-            theta3(2) = theta3(2)+(2*pi);
-        end
-    end
-    if theta3(1)>pi
-        while theta3(1)>pi
-            theta3(1) = theta3(1)-(2*pi);
-        end
-    end
-    if theta3(2)>pi
-        while theta3(2)>pi
-            theta3(2) = theta3(2)-(2*pi);
-        end
-    end
-    [M3,I3] = min((th_last(3)-theta3).^2);
-    th3 = theta3(I3);
-
-
-
-    alpha1 = atan2(d_14(2,1),d_14(1,1));
-    gamma = atan2((l*sin(th3+phi)),(a(2)+(l*cos(th3+phi))));
-    theta2 = alpha1 - gamma + pi/2;
-    if theta2<pi
-        while theta2<pi
-            theta2 = theta2+(2*pi);
-        end
-    end
-    if theta2>pi
-        while theta2>pi
-            theta2 = theta2-(2*pi);
-        end
-    end
-    [M2,I2] = min((th_last(2)-theta2).^2);
-    th2 = theta2(I2);
-    % Theta 5
-    rot_03 = rot_01*rotZ(th2-(pi/2))*rotX(alpha(2))*rotZ(th3)*rotX(alpha(3));
-    rot_36 = (rot_03')*T_des(1:3,1:3);
-    R1 = rot_36;
-    theta5(1) = atan2(sqrt((R1(3,1)^2)+(R1(3,2)^2)),R1(3,3));
-    theta5(2) = atan2(-sqrt((R1(3,1)^2)+(R1(3,2)^2)),R1(3,3));
-    if theta5(1)<-pi
-        while theta5(1)<-pi
-            theta5(1) = theta5(1)+(2*pi);
-        end
-    end
-    if theta5(2)<-pi
-        while theta5(2)<-pi
-            theta5(2) = theta5(2)+(2*pi);
-        end
-    end
-    if theta5(1)>pi
-        while theta5(1)>pi
-            theta5(1) = theta5(1)-(2*pi);
-        end
-    end
-    if theta5(2)>pi
-        while theta5(2)>pi
-            theta5(2) = theta5(2)-(2*pi);
-        end
-    end
-    [M5,I5] = min((th_last(5)-theta5).^2);
-    t5 = theta5(I5);
-    if round(sin(t5),2)==0
-        if round(cos(t5),2)==1
-            %     thetaa5(1)=t5;
-            %     thetaa5(2)=t5+(2*pi);
-            %     [M55,I55] = min((th_last(5)-thetaa5).^2);
-            %     th5 = thetaa5(I55);
-            %     Q=[2 0 1;0 2 1;1 1 0]\[2*th_last(4);2*th_last(6);atan2(R1(2,1),R1(1,1))];
-            %     th4=Q(1);
-            %     th6=Q(2);
-            thetaa5(1)=t5;
-            thetaa5(2)=t5+(2*pi);
-            [M55,I55] = min((th_last(5)-thetaa5).^2);
-            th5 = thetaa5(I55);
-            Q=[2 0 1;0 2 1;1 1 0]\[2*th_last(4);2*th_last(6);atan2(R1(2,1),R1(1,1))];
-            thetaa4(1)=Q(1);
-            thetaa4(2)=Q(1)-pi;
-            [M44,I44] = min((th_last(4)-thetaa4).^2);
-            th4 = thetaa4(I44);
-            thetaa6(1)=Q(2);
-            thetaa6(2)=Q(2)-pi;
-            [M66,I66] = min((th_last(6)-thetaa6).^2);
-            th6 = thetaa6(I66);
-        else
-            thetaa5(1)=t5;
-            thetaa5(2)=-t5;
-            [M55,I55] = min((th_last(5)-thetaa5).^2);
-            th5 = thetaa5(I55);
-            P=[2 0 -1;0 2 1;-1 1 0]\[2*th_last(4);2*th_last(6);atan2(R1(2,1),-R1(1,1))];
-            th4=P(1);
-            th6=P(2);
-        end
-    else
-        th5=t5;
-        th4 = atan2((-R1(2,3)/sin(th5)),(-R1(1,3)/sin(th5)));
-        %     theta4(2) = -atan2((-R1(2,3)/sin(th5)),(-R1(1,3)/sin(th5)));
-        %     [M4,I4] = min((th_last(4)-theta4).^2);
-        %     th4 = theta4(I4);
-        th6 = atan2((-R1(3,2)/sin(th5)),(R1(3,1)/sin(th5)));
-        %    [M6,I6] = min((th_last(6)-theta6).^2);
-        %     th6 = theta6(I6);
-    end
-
-    %     th2 = min((th_last(2)-theta2).^2);
-    %     th4 = min((th_last(4)-theta4).^2);
-    %     th6 = min((th_last(6)-theta6).^2);
-    if isreal(th1)==1 && isreal(th2)==1 && isreal(th3)==1 && isreal(th4)==1 && isreal(th5)==1 && isreal(th6)==1 && count==0
-        reachable=1;
-    else
-        reachable=0;
-    end
-end

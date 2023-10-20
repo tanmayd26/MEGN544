@@ -19,13 +19,13 @@
 
 function [p, v, a] = constAccelInterp(t, trajectory, transPercent)
 % Check if t is before or after the trajectory
-% if t <= trajectory(1, 1)
-%     t = trajectory(1, 1);
-% elseif t >= trajectory(end, 1)
-%     t = trajectory(end, 1);
-% end
+if t <= trajectory(1, 1)
+    t = trajectory(1, 1);
+elseif t >= trajectory(end, 1)
+    t = trajectory(end, 1);
+end
 t_arr = trajectory(:,1);
-%s = size(trajectory,1);
+
 % Find the segment in the trajectory that contains t
 for i = 2:size(trajectory, 1)
     if t <= trajectory(i, 1)
@@ -39,7 +39,7 @@ t_start = trajectory(segmentIndex, 1);
 disp(t_start)
 t_mid = trajectory(segmentIndex+1,1);
 disp(t_mid);
-% t_end = trajectory(segmentIndex+2, 1);
+
 
 
 
@@ -48,55 +48,21 @@ if segmentIndex == size(trajectory, 1) - 1
     t_end = trajectory(end, 1);  % Use the last time point as t_end
     disp(t_end);
     p_end = trajectory(end, 2:end);  % Use the last position data
-    % Handle the last segment as needed
+  
 else
     t_end = trajectory(segmentIndex + 2, 1);
     p_end = trajectory(segmentIndex + 2, 2:end);
-    % Handle other segments as you were doing before
+
 end
 
 p_start = trajectory(segmentIndex, 2:end);
 disp(p_start);
 p_mid = trajectory(segmentIndex+1,2:end);
 disp(p_mid);
-% p_end = trajectory(segmentIndex+2, 2:end);
+
 disp(p_end);
 
-% Calculate the time in the current segment
-% t_rel = (t - t_start) / (t_end - t_start);
-% disp(t_rel);
-%
-% % Determine the shorter duration segment for interpolation
-% if t_rel <= transPercent
-%     t_short = transPercent * (t_end - t_start);
-%
-%     t_long = t_end - t_start - t_short;
-%
-% else
-%     t_long = (1 - transPercent) * (t_end - t_start);
-%
-%     t_short = t_end - t_start - t_long;
-% end
-%
-% disp(t_long);
-% disp(t_short);
-%
-% % Calculate position, velocity, and acceleration
-% if t_rel <= transPercent
-%     % Constant acceleration phase
-%     v = (p_end - p_start) / t_short;
-%     p = p_start + v * (t_rel / transPercent);
-%     %v = (p_end - p_start) / t_short;
-%     a = zeros(size(p_start));
-% else
-%     % Linear phase
-%     p = p_start + (p_end - p_start) * (t_rel - transPercent) / (1 - transPercent);
-%     v = (p_end - p_start) / t_long;
-%     a = zeros(size(p_start));
-% end
-% disp(p);
-% disp(v);
-% disp(a);
+
 t_23 = transPercent * min(t_end-t_mid,t_mid-t_start);
 disp(t_23);
 
