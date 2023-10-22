@@ -1,4 +1,4 @@
-t = 1.46092636339877;
+t = 2.09146304795145;
 trajectory = [0	0	0;
     1	0	0;
     2	0.500000000000000	3;
@@ -6,7 +6,7 @@ trajectory = [0	0	0;
     4	0.130000000000000	1;
     5	0.130000000000000	1];
 
-transPercent = 0.00628058760695904;
+transPercent = 0.499731229595412;
 
 % Check if t is before or after the trajectory
 if t <= trajectory(1, 1)
@@ -14,87 +14,67 @@ if t <= trajectory(1, 1)
 elseif t >= trajectory(end, 1)
     t = trajectory(end, 1);
 end
-t_arr = trajectory(:,1);
-
-% Find the segment in the trajectory that contains t
-for i = 2:size(trajectory, 1)
-    if t <= trajectory(i, 1)
-        segmentIndex = i - 1;
-        break;
+if t>=trajectory(size(trajectory,1),1)
+    for i = 1:2
+        p(i) = trajectory(size(trajectory,1),i+1);
+        v(i) = 0;
+        a(i) = 0;
     end
-end
-
-% Extract relevant time and position data for the segment
-t_start = trajectory(segmentIndex, 1);
-disp(t_start)
-t_mid = trajectory(segmentIndex+1,1);
-disp(t_mid);
-
-
-
-
-if segmentIndex == size(trajectory, 1) - 1
-    % This is the last segment of the trajectory
-    t_end = trajectory(end, 1);  % Use the last time point as t_end
- 
-    p_end = trajectory(end, 2:end);  % Use the last position data
-  
+elseif t<=trajectory(1,1)
+    for i = 1:2
+        p(i) = trajectory(1,i+1);
+        v(i) = 0;
+        a(i) = 0;
+    end
 else
-    t_end = trajectory(segmentIndex + 2, 1);
-    
-    p_end = trajectory(segmentIndex + 2, 2:end);
+    for i =1:size(trajectory,1)
+        if t >trajectory(i,1) && t<trajectory(i+1,1)
+            ta = trajectory(i,1);
+            tb = trajectory(i+1, 1);
+            if i == size(trajectory,1) - 1
+                tc = tb;
+                to = trajectory(i-1,1);
+            elseif i == 1
+                tc = trajectory(i+2,1);
+                to = ta;
+            else
+                tc = trajectory(i+2,1);
+                to = trajectory(i-1,1);
+            end
+            for j = 1:2
+                if i == size(trajectory,1) - 1
+                    thetaC(j) = 0;
+                else
+                    thetaC(j) = trajectory(i+2, 1+j);
+                end
+                thetaA(j) = trajectory(i, 1+j);
+                thetaB(j) = trajectory(i+1, 1+j);
 
-end
-   disp(t_end);
-p_start = trajectory(segmentIndex, 2:end);
-disp(p_start);
-p_mid = trajectory(segmentIndex+1,2:end);
-disp(p_mid);
-
-disp(p_end);
-
-
-
-
-for i=2:(size(trajectory)-1)
-    t_23 = transPercent * min(t_end-t_mid,t_mid-t_start);
-disp(t_23);
-
-t_2 = t_mid-t_23;
-disp(t_2);
-t_3 = t_mid+t_23;
-disp(t_3);
-
-v_start_mid = (p_mid-p_start)/(t_mid-t_start);
-disp(v_start_mid);
-v_mid_end = (p_end-p_mid)/(t_end-t_mid);
-disp(v_mid_end);
-
-a_mid_end = (v_mid_end-v_start_mid)/(2*t_23);
-disp(a_mid_end);
-
-p_2 = p_mid-v_start_mid*t_23;
-disp(p_2);
-    if t>t_arr(i-1) && t<t_2
-        disp(i);
-        pos = p_start + v_start_mid*(t-t_start);
-        vel = v_start_mid;
-        acc = zeros(size(pos));
-
-    elseif t>t_2 && t<t_3
-        pos = p_2 + v_start_mid*(t-t_2)+(1/2)*a_mid_end*(t-t_2)^2;
-        vel = v_mid_end+a_mid_end*(t-t_2);
-        acc = a_mid_end;
-
-    elseif segmentIndex == (size(trajectory)-1) && t<t_arr(i-1) && t>t_2
-        pos = p_start;
-        vel = zeros(size(pos));
-        acc = zeros(size(pos));
-
+            end
+            break;
+        end
     end
-   
+    T23 = transPercent* min(tc-tb,tb-ta);
+    T12 = transPercent * min(tb-ta,ta-to);
+    t1 = ta + T12;
+    t2 = tb - T23;
+    t3 = tb + T23;
+
+    for i = 1:2
+        Vab(i) = (thetaB(i) - thetaA(i)) / (tb - ta);
+        Vbc(i) = (thetaC(i) - thetaB(i)) / (tc - tb);
+        a23(i) = (Vbc(i) - Vab(i))/(2*T23);
+        P2(i) = thetaB(i) - Vab(i) * T23;
+        if t>t1 && t<t2
+            p(i) = thetaA(i) + Vab(i)*(t-ta);
+            v(i) = Vab(i);
+            a(i) = 0;
+        elseif t>t2 && t<t3
+            p(i) = P2(i) + Vab(i)*(t - t2) + 0.5*a23(i)*(t - t2)^2;
+            v(i) = Vab(i) + a23(i)*(t - t2);
+            a(i) = a23(i);
+
+        end
+    end
 
 end
- p = pos;
- v = vel;
- a = acc;

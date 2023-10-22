@@ -20,9 +20,9 @@ trajectory = [2,zeros(1,6);
 if uses_geometry
     % assert(exist('velocityJacobian.m','file')==2,'Simulation Error:  Need to add project files to path');
     % assert(exist('transError.m','file')==2,'Simulation Error:  Need to add project files to path');
-    % assert(exist('cpMap.m','file')==2,'Simulation Error:  Need to add project files to path');
+    assert(exist('cpMap.m','file')==2,'Simulation Error:  Need to add project files to path');
     % assert(exist('newtonEuler.m','file')==2,'Simulation Error:  Need to add project files to path');
-    % assert(exist('dhFwdKine.m','file')==2,'Simulation Error:  Need to add project files to path');
+    assert(exist('dhFwdKine.m','file')==2,'Simulation Error:  Need to add project files to path');
     assert(exist('constAccelInterp.m','file')==2,'Simulation Error:  Need to add project files to path');
     assert(exist('createLink.m','file')==2,'Simulation Error:  Need to add project files to path');
     run('Geometry.m'); 
@@ -33,8 +33,8 @@ if drawCSM
 end 
 
 if Velocity_Mode
-    assert(exist('velocityJacobian.m','file')==2,'Simulation Error:  Need to add project files to path');
-    assert(exist('transError.m','file')==2,'Simulation Error:  Need to add project files to path');
+    % assert(exist('velocityJacobian.m','file')==2,'Simulation Error:  Need to add project files to path');
+    % assert(exist('transError.m','file')==2,'Simulation Error:  Need to add project files to path');
     assert(exist('cpMap.m','file')==2,'Simulation Error:  Need to add project files to path');
     assert(exist('dhFwdKine.m','file')==2,'Simulation Error:  Need to add project files to path');
 end
