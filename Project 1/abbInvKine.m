@@ -102,9 +102,7 @@ if exist('th_last','var')==0
     else
         reachable=0;
     end
-    %
-    %
-    %
+ 
 else
     % Theta 1
     d_05 = T_des(1:3,4) - (d(6)*T_des(1:3,1:3)*[0;0;1]);
@@ -133,8 +131,8 @@ else
 
     %theta1(2) = pi+atan2(d_05(2,1),d_05(1,1));
     %theta1(2) = pi+atan2(d_05(2,1),d_05(1,1));
-    [M1,I1] = min((th_last(1)-theta1).^2);
-    th1 = theta1(I1);
+    [Min1,Ind1] = min((th_last(1)-theta1).^2);
+    th1 = theta1(Ind1);
     % Theta 3
     rot_01 = rotZ(th1)*rotX(alpha(1));
     d_01 = d(1)*[0;0;1];
@@ -169,8 +167,8 @@ else
             theta3(2) = theta3(2)-(2*pi);
         end
     end
-    [M3,I3] = min((th_last(3)-theta3).^2);
-    th3 = theta3(I3);
+    [Min3,Ind3] = min((th_last(3)-theta3).^2);
+    th3 = theta3(Ind3);
 
 
 
@@ -187,8 +185,8 @@ else
             theta2 = theta2-(2*pi);
         end
     end
-    [M2,I2] = min((th_last(2)-theta2).^2);
-    th2 = theta2(I2);
+    [Min2,Ind2] = min((th_last(2)-theta2).^2);
+    th2 = theta2(Ind2);
     % Theta 5
     rot_03 = rot_01*rotZ(th2-(pi/2))*rotX(alpha(2))*rotZ(th3)*rotX(alpha(3));
     rot_36 = (rot_03')*T_des(1:3,1:3);
@@ -220,24 +218,24 @@ else
     if round(sin(t5),2)==0
         if round(cos(t5),2)==1
           
-            thetaa5(1)=t5;
-            thetaa5(2)=t5+(2*pi);
-            [M55,I55] = min((th_last(5)-thetaa5).^2);
-            th5 = thetaa5(I55);
+            theta5(1)=t5;
+            theta5(2)=t5+(2*pi);
+            [Min55,Ind55] = min((th_last(5)-theta5).^2);
+            th5 = theta5(Ind55);
             Q=[2 0 1;0 2 1;1 1 0]\[2*th_last(4);2*th_last(6);atan2(R1(2,1),R1(1,1))];
-            thetaa4(1)=Q(1);
-            thetaa4(2)=Q(1)-pi;
-            [M44,I44] = min((th_last(4)-thetaa4).^2);
-            th4 = thetaa4(I44);
-            thetaa6(1)=Q(2);
-            thetaa6(2)=Q(2)-pi;
-            [M66,I66] = min((th_last(6)-thetaa6).^2);
-            th6 = thetaa6(I66);
+            theta4(1)=Q(1);
+            theta4(2)=Q(1)-pi;
+            [Min44,Ind44] = min((th_last(4)-theta4).^2);
+            th4 = theta4(Ind44);
+            theta6(1)=Q(2);
+            theta6(2)=Q(2)-pi;
+            [Min66,Ind66] = min((th_last(6)-theta6).^2);
+            th6 = theta6(Ind66);
         else
-            thetaa5(1)=t5;
-            thetaa5(2)=-t5;
-            [M55,I55] = min((th_last(5)-thetaa5).^2);
-            th5 = thetaa5(I55);
+            theta5(1)=t5;
+            theta5(2)=-t5;
+            [Min55,Ind55] = min((th_last(5)-theta5).^2);
+            th5 = theta5(Ind55);
             P=[2 0 -1;0 2 1;-1 1 0]\[2*th_last(4);2*th_last(6);atan2(R1(2,1),-R1(1,1))];
             th4=P(1);
             th6=P(2);

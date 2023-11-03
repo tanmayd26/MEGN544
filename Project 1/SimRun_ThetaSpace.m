@@ -6,8 +6,8 @@ drawCSM = false;  % Draws CSM on the plot, requires a points3D.mat file to exist
 Velocity_Mode = false; % Enables theta_dot only based control
 Sim_Exact = false; % sets if the simulated geometry is exact (true) or slightly different (false)
 simTime = 52; %Run the simulation for the specified number of seconds
-makeMovie = true;
-uses_geometry = false;  %if true it makes a link-list for use in your functions
+makeMovie = false;
+uses_geometry = true;  %if true it makes a link-list for use in your functions
 
 %% Define Theta space Trajectory
 % [ time_end, th1->th6;...]
@@ -40,8 +40,8 @@ trajectory = [0, [1.52696476906926,-2.03010727357431,0.731598816110416,-3.096086
 
 %% Load ABB Arm Geometry
 if uses_geometry
-    % assert(exist('velocityJacobian.m','file')==2,'Simulation Error:  Need to add project files to path');
-    % assert(exist('transError.m','file')==2,'Simulation Error:  Need to add project files to path');
+    assert(exist('velocityJacobian.m','file')==2,'Simulation Error:  Need to add project files to path');
+    assert(exist('transError.m','file')==2,'Simulation Error:  Need to add project files to path');
     assert(exist('cpMap.m','file')==2,'Simulation Error:  Need to add project files to path');
     % assert(exist('newtonEuler.m','file')==2,'Simulation Error:  Need to add project files to path');
     assert(exist('dhFwdKine.m','file')==2,'Simulation Error:  Need to add project files to path');
@@ -55,8 +55,8 @@ if drawCSM
 end 
 
 if Velocity_Mode
-    % assert(exist('velocityJacobian.m','file')==2,'Simulation Error:  Need to add project files to path');
-    % assert(exist('transError.m','file')==2,'Simulation Error:  Need to add project files to path');
+    assert(exist('velocityJacobian.m','file')==2,'Simulation Error:  Need to add project files to path');
+    assert(exist('transError.m','file')==2,'Simulation Error:  Need to add project files to path');
     assert(exist('cpMap.m','file')==2,'Simulation Error:  Need to add project files to path');
     assert(exist('dhFwdKine.m','file')==2,'Simulation Error:  Need to add project files to path');
 end
