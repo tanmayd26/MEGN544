@@ -242,9 +242,13 @@ else
         end
     else
         th5=t5;
-        th4 = atan2((-R1(2,3)/sin(th5)),(-R1(1,3)/sin(th5)));
+        theta4 = atan2((-R1(2,3)/sin(th5)),(-R1(1,3)/sin(th5)));
         
         th6 = atan2((-R1(3,2)/sin(th5)),(R1(3,1)/sin(th5)));
+        if abs(theta(1)-th_last(4))>pi
+            theta4(1) = theta4(1) -2*pi;
+        end
+        th4 = theta4(1);
     
     end
 
