@@ -16,7 +16,7 @@
 % November 5th 2023
 
 function [paramList, error] = dhInvKine( linkList,desTransform, paramListGuess)
-%% initializing
+%% Initialize
 paramList = paramListGuess;
 Tc = dhFwdKine(linkList,paramList);
 error = transError(desTransform,Tc);
@@ -29,8 +29,12 @@ while norm(error) > 1e-15 && norm(dp)>1e-15
     [r,c]=size(S);
     maxS = max(S);
     Inv_s = zeros(size(S));
-
-    for i = 1:r
+    if r<c
+        N = r;
+    else
+        N = c;
+    end
+    for i = 1:N
         if S(i,i)< maxS(1,1)/500
             Inv_s(i,i) = 0;
         else

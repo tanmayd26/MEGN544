@@ -85,14 +85,18 @@ error = transError(desTransform,Tc);
 dp = Inf;
 %%
 
-while norm(e) > 1e-15 && norm(dp)>1e-15
+while norm(error) > 1e-15 && norm(dp)>1e-15
     Jv = velocityJacobian(linkList,paramList);
     [U,S,V]=svd(Jv);
     [r,c]=size(S);
     maxS = max(S);
     Inv_s = zeros(size(S));
-
-    for i = 1:r
+    if r<c
+        N = r;
+    else
+        N = c;
+    end
+    for i = 1:N
         if S(i,i)< maxS(1,1)/500
             Inv_s(i,i) = 0;
         else
